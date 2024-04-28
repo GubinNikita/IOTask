@@ -5,11 +5,10 @@ import controller.command.util.CommandArgsRegex;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class CreateCommandArgsParser {
+public final class CreateCommandArgsParser {
 
     private static final Pattern commandArgsPattern = Pattern.compile(CommandArgsRegex.CREATE_COMMAND_ARGS_REGEX);
-
-    private Matcher matcher;
+    private final Matcher matcher;
 
     public CreateCommandArgsParser(String arguments) {
         matcher = commandArgsPattern.matcher(arguments);

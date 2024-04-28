@@ -9,21 +9,33 @@ import java.util.Scanner;
 
 public class Controller {
 
+    private final CommandProvider commandProvider;
+
+    public Controller(CommandProvider commandProvider) {
+        this.commandProvider = commandProvider;
+    }
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.println("Enter command:");
-            String commandLine = scanner.nextLine();
-            executeCommand(commandLine);
+        CommandProvider commandProvider = CommandProvider.getInstance();
+        Controller controller = new Controller(commandProvider);
+        controller.startListening();
+    }
+
+    public void startListening() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            String commandLine;
+            while (true) {
+                System.out.println("Enter command (or type 'exit' to quit):");
+                commandLine = scanner.nextLine();
+                executeCommand(commandLine);
+            }
         }
     }
 
-    private static void executeCommand(String commandLine) {
-        CommandProvider commandProvider = CommandProvider.getInstance();
-
-        String[] parts = commandLine.split(" ", 2);
+    private void executeCommand(String commandLine) {
+        String[] parts = parseCommand(commandLine);
         String commandName = parts[0];
-        String arguments = parts.length > 1 ? parts[1] : "";
+        String arguments = parts[1];
 
         Command command = commandProvider.getCommand(commandName);
 
@@ -36,5 +48,13 @@ public class Controller {
         } catch (CommandException e) {
             System.out.println(e.getLocalizedMessage());
         }
+    }
+
+    private String[] parseCommand(String commandLine) {
+        String[] parts = commandLine.split(" ", 2);
+        if (parts.length < 2) {
+            return new String[]{parts[0], ""};
+        }
+        return parts;
     }
 }

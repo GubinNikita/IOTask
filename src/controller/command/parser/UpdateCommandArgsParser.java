@@ -6,11 +6,11 @@ import controller.command.util.OptionName;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class UpdateCommandArgsParser {
+public final class UpdateCommandArgsParser {
 
     private static final Pattern commandArgsPattern = Pattern.compile(CommandArgsRegex.UPDATE_COMMAND_ARGS_REGEX);
+    private final Matcher matcher;
 
-    private Matcher matcher;
     private OptionParsed optionParsed;
 
     public UpdateCommandArgsParser(String arguments) {
