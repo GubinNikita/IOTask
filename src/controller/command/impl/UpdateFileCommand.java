@@ -20,7 +20,7 @@ public class UpdateFileCommand implements Command {
     public void execute(String arguments) throws CommandException {
 
         if (!CommandArgsValidator.validate(arguments, CommandArgsRegex.UPDATE_COMMAND_ARGS_REGEX)) {
-            throw new CommandException("Invalid command format. Please use the format: update -f\"filePath/filename.txt\" [-a |-nl lineIndex |-dl lineIndex] \"text\"");
+            throw new CommandException("Invalid command format. Please use the format: update -f\"filePath/filename.txt\" [-a |-nl lineIndex |-dl lineIndex] \"text\"(exception -dl option)");
         }
 
         UpdateCommandArgsParser parser = new UpdateCommandArgsParser(arguments);
@@ -54,7 +54,7 @@ public class UpdateFileCommand implements Command {
     }
 
     private void updateFileContent(String option, String text, List<String> lines) throws CommandException {
-        if (option.equals(" -a")) {
+        if (option.startsWith(" -a")) {
             lines.add(text);
         } else if (option.startsWith(" -nl")) {
             insertTextAtLine(option, text, lines);
