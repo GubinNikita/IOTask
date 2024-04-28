@@ -11,41 +11,57 @@ public class UpdateCommandArgsParser {
     private static final Pattern commandArgsPattern = Pattern.compile(CommandArgsRegex.UPDATE_COMMAND_ARGS_REGEX);
 
     private Matcher matcher;
+    private OptionParsed optionParsed;
 
     public UpdateCommandArgsParser(String arguments) {
         matcher = commandArgsPattern.matcher(arguments);
         matcher.matches();
+        parseOption();
+    }
+
+    private void parseOption() {
+        String optionString = matcher.group(2);
+
+        if (optionString.startsWith(OptionName.A_OPTION)) {
+            optionParsed = new OptionParsed(OptionName.A_OPTION, matcher.group(3));
+        } else if (optionString.startsWith(OptionName.NL_OPTION)) {
+            optionParsed = new OptionParsed(OptionName.NL_OPTION, matcher.group(5), matcher.group(4));
+        } else if (optionString.startsWith(OptionName.DL_OPTION)) {
+            optionParsed = new OptionParsed(OptionName.DL_OPTION, null, matcher.group(6));
+        } else {
+            optionParsed = new OptionParsed(null, matcher.group(7));
+        }
     }
 
     public String getFilePath() {
         return matcher.group(1);
     }
 
-    public String getOption() {
-        String optionString = matcher.group(2);
-
-        if (optionString.startsWith(OptionName.A_OPTION)) {
-            return optionString;
-        } else if (optionString.startsWith(OptionName.NL_OPTION)) {
-            return OptionName.NL_OPTION + " " + matcher.group(4);
-        } else if (optionString.startsWith(OptionName.DL_OPTION)) {
-            return matcher.group(2);
-        }
-
-        return null;
+    public String getText() {
+        return optionParsed.text;
     }
 
-    public String getText() {
-        String optionString = matcher.group(2);
+    public String getOption() {
+        return optionParsed.option;
+    }
 
-        if (optionString.startsWith(OptionName.A_OPTION)) {
-            return matcher.group(3);
-        } else if (optionString.startsWith(OptionName.NL_OPTION)) {
-            return matcher.group(5);
-        } else if (optionString.startsWith(OptionName.DL_OPTION)) {
-            return null;
+    public String getLineNumber() {
+        return optionParsed.lineNumber;
+    }
+
+    private static class OptionParsed {
+        String option;
+        String lineNumber;
+        String text;
+
+        OptionParsed(String option, String text) {
+            this.option = option;
+            this.text = text;
         }
 
-        return matcher.group(7);
+        OptionParsed(String option, String text, String lineNumber) {
+            this(option, text);
+            this.lineNumber = lineNumber;
+        }
     }
 }

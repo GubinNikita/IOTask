@@ -15,8 +15,6 @@ import java.util.List;
 
 public class UpdateFileCommand implements Command {
 
-    private static final int OPTION_VALUE_OFFSET = 4;
-
     @Override
     public void execute(String arguments) throws CommandException {
 
@@ -28,22 +26,23 @@ public class UpdateFileCommand implements Command {
         String filePath = parser.getFilePath();
         String option = parser.getOption();
         String text = parser.getText();
+        String lineNumber = parser.getLineNumber();
 
         try {
-            processFile(filePath, option, text);
+            processFile(filePath, option, text, lineNumber);
         } catch (IOException | CommandException e) {
             throw new CommandException(e);
         }
     }
 
-    private void processFile(String filePath, String option, String text) throws IOException, CommandException {
+    private void processFile(String filePath, String option, String text, String lineNumber) throws IOException, CommandException {
         Path path = Paths.get(filePath);
         List<String> lines = Files.readAllLines(path);
 
         if (option == null) {
             replaceFileContent(lines, text);
         } else {
-            updateFileContent(option, text, lines);
+            updateFileContent(option, text, lines, lineNumber);
         }
 
         Files.write(path, lines);
@@ -54,34 +53,36 @@ public class UpdateFileCommand implements Command {
         lines.add(text);
     }
 
-    private void updateFileContent(String option, String text, List<String> lines) throws CommandException {
-        if (option.startsWith(OptionName.A_OPTION)) {
-            lines.add(text);
-        } else if (option.startsWith(OptionName.NL_OPTION)) {
-            insertTextAtLine(option, text, lines);
-        } else if (option.startsWith(OptionName.DL_OPTION)) {
-            deleteLine(option, lines);
+    private void updateFileContent(String option, String text, List<String> lines, String lineNumber) throws CommandException {
+        switch (option) {
+            case OptionName.A_OPTION:
+                lines.add(text);
+                break;
+            case OptionName.NL_OPTION:
+                insertTextAtLine(Integer.parseInt(lineNumber), text, lines);
+                break;
+            case OptionName.DL_OPTION:
+                deleteLine(Integer.parseInt(lineNumber), lines);
+                break;
         }
     }
 
-    private void insertTextAtLine(String option, String text, List<String> lines) throws CommandException {
-        int lineIndex = Integer.parseInt(option.substring(OPTION_VALUE_OFFSET));
-        if (lineIndex <= 0) {
+    private void insertTextAtLine(int lineNumber, String text, List<String> lines) throws CommandException {
+        if (lineNumber <= 0) {
             throw new CommandException("Invalid line number for insertion. Please provide a valid line number.");
         }
-        if (lineIndex > lines.size()) {
-            while (lines.size() < lineIndex) {
+        if (lineNumber > lines.size()) {
+            while (lines.size() < lineNumber) {
                 lines.add("");
             }
         }
-        lines.add(lineIndex - 1, text);
+        lines.add(lineNumber - 1, text);
     }
 
-    private void deleteLine(String option, List<String> lines) throws CommandException {
-        int lineIndex = Integer.parseInt(option.substring(OPTION_VALUE_OFFSET));
-        if (lineIndex <= 0 || lineIndex > lines.size()) {
+    private void deleteLine(int lineNumber, List<String> lines) throws CommandException {
+        if (lineNumber <= 0 || lineNumber > lines.size()) {
             throw new CommandException("Invalid line number for deletion. Please provide a valid line number.");
         }
-        lines.remove(lineIndex - 1);
+        lines.remove(lineNumber - 1);
     }
 }
