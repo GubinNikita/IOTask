@@ -5,6 +5,7 @@ import controller.command.CommandException;
 import controller.command.parser.UpdateCommandArgsParser;
 import controller.command.validator.CommandArgsValidator;
 import controller.command.util.CommandArgsRegex;
+import controller.command.util.OptionName;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class UpdateFileCommand implements Command {
 
-    private static final int OPTION_VALUE_OFFSET = 5;
+    private static final int OPTION_VALUE_OFFSET = 4;
 
     @Override
     public void execute(String arguments) throws CommandException {
@@ -54,11 +55,11 @@ public class UpdateFileCommand implements Command {
     }
 
     private void updateFileContent(String option, String text, List<String> lines) throws CommandException {
-        if (option.startsWith(" -a")) {
+        if (option.startsWith(OptionName.A_OPTION)) {
             lines.add(text);
-        } else if (option.startsWith(" -nl")) {
+        } else if (option.startsWith(OptionName.NL_OPTION)) {
             insertTextAtLine(option, text, lines);
-        } else if (option.startsWith(" -dl")) {
+        } else if (option.startsWith(OptionName.DL_OPTION)) {
             deleteLine(option, lines);
         }
     }
