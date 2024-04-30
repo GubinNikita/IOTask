@@ -112,6 +112,12 @@ public final class UpdateFileCommandHandler implements CommandHandler {
      */
     private void processFile(String filePath, String updateOption, String text, String lineNumber) throws IOException, CommandException {
         Path path = Paths.get(filePath);
+
+        if (!Files.exists(path)) {
+            logger.log(Level.SEVERE, "File does not exist: " + filePath);
+            throw new CommandException("File does not exist: " + filePath + ". Please check the file path and try again.");
+        }
+
         List<String> lines = Files.readAllLines(path);
 
         if (updateOption == null) {
