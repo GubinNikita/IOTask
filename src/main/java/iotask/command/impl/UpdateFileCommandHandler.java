@@ -87,6 +87,7 @@ public final class UpdateFileCommandHandler implements CommandHandler {
         String text = parser.getText();
         String lineNumber = parser.getLineNumber();
 
+        logger.log(Level.INFO, "Update file command executing...");
         try {
             processFile(filePath, updateOption, text, lineNumber);
             logger.log(Level.INFO, "File updated successfully: " + filePath);

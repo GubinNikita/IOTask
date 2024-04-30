@@ -8,7 +8,7 @@ import main.java.iotask.command.impl.ExitCommandHandler;
 import main.java.iotask.command.impl.NoSuchCommandHandler;
 
 import java.util.Map;
-import java.util.EnumMap;
+import java.util.HashMap;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -32,11 +32,11 @@ public class CommandProvider {
     private final static CommandProvider instance = new CommandProvider();
 
     /**
-     * A map containing command instances, indexed by their respective {@link CommandName}.
+     * A map containing command instances, indexed by their respective {@link CommandName} string.
      *
      * @see CommandHandler
      */
-    private final Map<CommandName, CommandHandler> repository = new EnumMap<>(CommandName.class);
+    private final Map<String, CommandHandler> repository = new HashMap<>();
 
     /**
      * A default command instance to be returned when the requested command is not found.
@@ -52,11 +52,11 @@ public class CommandProvider {
      * @see CommandName
      */
     private CommandProvider() {
-        repository.put(CommandName.COPY, new CopyFileCommandHandler());
-        repository.put(CommandName.CREATE, new CreateFileCommandHandler());
-        repository.put(CommandName.DELETE, new DeleteFileCommandHandler());
-        repository.put(CommandName.UPDATE, new UpdateFileCommandHandler());
-        repository.put(CommandName.EXIT, new ExitCommandHandler());
+        repository.put(CommandName.COPY.name(), new CopyFileCommandHandler());
+        repository.put(CommandName.CREATE.name(), new CreateFileCommandHandler());
+        repository.put(CommandName.DELETE.name(), new DeleteFileCommandHandler());
+        repository.put(CommandName.UPDATE.name(), new UpdateFileCommandHandler());
+        repository.put(CommandName.EXIT.name(), new ExitCommandHandler());
 
         logger.log(Level.INFO, "CommandProvider initialized with command instances");
     }
@@ -79,17 +79,9 @@ public class CommandProvider {
      * @see CommandHandler
      */
     public CommandHandler getCommand(String name) {
-        CommandName commandName;
-        CommandHandler commandHandler;
+        logger.log(Level.INFO, "Retrieving command from provider by name: " + name.toUpperCase());
 
-        try {
-            commandName = CommandName.valueOf(name.toUpperCase());
-            commandHandler = repository.get(commandName);
-        } catch (IllegalArgumentException e) {
-            commandHandler = noSuchCommandHandler;
-            logger.log(Level.WARNING, "Requested command not found: " + name);
-        }
-
-        return commandHandler;
+        String commandName = name.toUpperCase();
+        return repository.getOrDefault(commandName, noSuchCommandHandler);
     }
 }

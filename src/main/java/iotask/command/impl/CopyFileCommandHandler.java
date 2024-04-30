@@ -73,6 +73,7 @@ public final class CopyFileCommandHandler implements CommandHandler {
         String sourceFilePath = parser.getSourceFilePath();
         String destinationFilePath = parser.getDestinationFilePath();
 
+        logger.log(Level.INFO, "Copy file command executing...");
         try {
             Path sourcePath = Paths.get(sourceFilePath);
             Path destinationPath = Paths.get(destinationFilePath);

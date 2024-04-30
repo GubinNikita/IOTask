@@ -65,6 +65,7 @@ public final class DeleteFileCommandHandler implements CommandHandler {
         parser.parse(arguments);
         String filePath = parser.getFilePath();
 
+        logger.log(Level.INFO, "Delete file command executing...");
         try {
             Path path = Paths.get(filePath);
             Files.deleteIfExists(path);

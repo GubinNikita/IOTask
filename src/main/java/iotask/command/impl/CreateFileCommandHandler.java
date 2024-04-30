@@ -68,6 +68,7 @@ public final class CreateFileCommandHandler implements CommandHandler {
         String filePath = parser.getFilePath();
         String text = parser.getText();
 
+        logger.log(Level.INFO, "Create file command executing...");
         try {
             Path path = Paths.get(filePath);
             Files.createDirectories(path.getParent());

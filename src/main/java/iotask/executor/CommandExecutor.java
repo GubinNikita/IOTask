@@ -43,13 +43,15 @@ public class CommandExecutor {
      * @see CommandHandler
      */
     public void executeCommand(String commandLine) throws CommandException {
-        logger.log(Level.INFO, "Executing command: " + commandLine);
+        logger.log(Level.INFO, "Received command line: " + commandLine);
 
         String[] parts = parseCommandLine(commandLine);
         String commandName = parts[0];
         String arguments = parts[1];
 
         CommandHandler commandHandler = commandProvider.getCommand(commandName);
+
+        logger.log(Level.INFO, "Executing command...");
         commandHandler.execute(arguments);
     }
 
