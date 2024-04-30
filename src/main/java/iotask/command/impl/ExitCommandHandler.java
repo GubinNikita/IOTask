@@ -1,14 +1,14 @@
 package main.java.iotask.command.impl;
 
-import main.java.iotask.command.Command;
+import main.java.iotask.command.CommandHandler;
 
 /**
  * This class represents a command for exiting the application.
- * It implements the {@link Command} interface and provides the functionality to execute the exit command.
+ * It implements the {@link CommandHandler} interface and provides the functionality to execute the exit command.
  *
  * @author Nikita Gubin
  */
-public class ExitCommand implements Command {
+public class ExitCommandHandler implements CommandHandler {
 
     /**
      * Executes the command to exit the application.

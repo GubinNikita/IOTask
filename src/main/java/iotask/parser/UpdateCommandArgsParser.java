@@ -1,6 +1,6 @@
 package main.java.iotask.parser;
 
-import main.java.iotask.command.impl.UpdateFileCommand;
+import main.java.iotask.command.impl.UpdateFileCommandHandler;
 
 /**
  * A parser for parsing command arguments specific to the update file command.
@@ -17,12 +17,12 @@ public final class UpdateCommandArgsParser extends CommandArgsParser {
     private OptionParsed optionParsed;
 
     /**
-     * Constructs a new {@code UpdateCommandArgsParser} with the regular expression pattern from the {@link UpdateFileCommand}.
+     * Constructs a new {@code UpdateCommandArgsParser} with the regular expression pattern from the {@link UpdateFileCommandHandler}.
      *
-     * @see UpdateFileCommand#UPDATE_COMMAND_ARGS_REGEX
+     * @see UpdateFileCommandHandler#UPDATE_COMMAND_ARGS_REGEX
      */
     public UpdateCommandArgsParser() {
-        super(UpdateFileCommand.UPDATE_COMMAND_ARGS_REGEX);
+        super(UpdateFileCommandHandler.UPDATE_COMMAND_ARGS_REGEX);
     }
 
     /**
@@ -41,19 +41,19 @@ public final class UpdateCommandArgsParser extends CommandArgsParser {
      * Parses the command arguments and extracts the update option details.
      *
      * @see UpdateCommandArgsParser#optionParsed
-     * @see UpdateFileCommand#A_OPTION
-     * @see UpdateFileCommand#NL_OPTION
-     * @see UpdateFileCommand#DL_OPTION
+     * @see UpdateFileCommandHandler#A_OPTION
+     * @see UpdateFileCommandHandler#NL_OPTION
+     * @see UpdateFileCommandHandler#DL_OPTION
      */
     private void parseOption() {
         String optionString = matcher.group(2);
 
-        if (optionString.startsWith(UpdateFileCommand.A_OPTION)) {
-            optionParsed = new OptionParsed(UpdateFileCommand.A_OPTION, matcher.group(3));
-        } else if (optionString.startsWith(UpdateFileCommand.NL_OPTION)) {
-            optionParsed = new OptionParsed(UpdateFileCommand.NL_OPTION, matcher.group(5), matcher.group(4));
-        } else if (optionString.startsWith(UpdateFileCommand.DL_OPTION)) {
-            optionParsed = new OptionParsed(UpdateFileCommand.DL_OPTION, null, matcher.group(6));
+        if (optionString.startsWith(UpdateFileCommandHandler.A_OPTION)) {
+            optionParsed = new OptionParsed(UpdateFileCommandHandler.A_OPTION, matcher.group(3));
+        } else if (optionString.startsWith(UpdateFileCommandHandler.NL_OPTION)) {
+            optionParsed = new OptionParsed(UpdateFileCommandHandler.NL_OPTION, matcher.group(5), matcher.group(4));
+        } else if (optionString.startsWith(UpdateFileCommandHandler.DL_OPTION)) {
+            optionParsed = new OptionParsed(UpdateFileCommandHandler.DL_OPTION, null, matcher.group(6));
         } else {
             optionParsed = new OptionParsed(null, matcher.group(7));
         }

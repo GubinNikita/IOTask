@@ -1,6 +1,6 @@
 package main.java.iotask.parser;
 
-import main.java.iotask.command.impl.CopyFileCommand;
+import main.java.iotask.command.impl.CopyFileCommandHandler;
 
 /**
  * A parser for parsing command arguments specific to the copy file command.
@@ -10,12 +10,12 @@ import main.java.iotask.command.impl.CopyFileCommand;
 public final class CopyCommandArgsParser extends CommandArgsParser {
 
     /**
-     * Constructs a new {@link CopyCommandArgsParser} with the regular expression pattern from the {@link CopyFileCommand}.
+     * Constructs a new {@link CopyCommandArgsParser} with the regular expression pattern from the {@link CopyFileCommandHandler}.
      *
-     * @see CopyFileCommand#COPY_COMMAND_ARGS_REGEX
+     * @see CopyFileCommandHandler#COPY_COMMAND_ARGS_REGEX
      */
     public CopyCommandArgsParser() {
-        super(CopyFileCommand.COPY_COMMAND_ARGS_REGEX);
+        super(CopyFileCommandHandler.COPY_COMMAND_ARGS_REGEX);
     }
 
     /**

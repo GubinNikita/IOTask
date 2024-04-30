@@ -1,6 +1,6 @@
 package main.java.iotask.command.impl;
 
-import main.java.iotask.command.Command;
+import main.java.iotask.command.CommandHandler;
 import main.java.iotask.exception.CommandException;
 import main.java.iotask.parser.UpdateCommandArgsParser;
 import main.java.iotask.validator.CommandArgsValidator;
@@ -11,17 +11,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 /**
  * This class represents a command for updating a file.
- * It implements the {@link Command} interface and provides the functionality to execute the update command.
+ * It implements the {@link CommandHandler} interface and provides the functionality to execute the update command.
  * The class uses {@link UpdateCommandArgsParser} for parsing the command arguments and {@link CommandArgsValidator} for validating the command format.
  * Supports various update operations such as replace file content, appending text, inserting text at a specific line, or deleting a line.
  *
  * @author Nikita Gubin
- * @see UpdateFileCommand#replaceFileContent(List, String)
- * @see UpdateFileCommand#updateFileContent(String, String, List, String)
+ * @see UpdateFileCommandHandler#replaceFileContent(List, String)
+ * @see UpdateFileCommandHandler#updateFileContent(String, String, List, String)
  */
-public final class UpdateFileCommand implements Command {
+public final class UpdateFileCommandHandler implements CommandHandler {
+
+    /**
+     * The logger for {@link UpdateFileCommandHandler} class.
+     */
+    private static final Logger logger = Logger.getLogger(UpdateFileCommandHandler.class.getName());
 
     /**
      * The regular expression for validating the format of the update command arguments.
@@ -51,9 +59,9 @@ public final class UpdateFileCommand implements Command {
     private final UpdateCommandArgsParser parser;
 
     /**
-     * Constructs a new {@link UpdateFileCommand} with a {@link UpdateCommandArgsParser}.
+     * Constructs a new {@link UpdateFileCommandHandler} with a {@link UpdateCommandArgsParser}.
      */
-    public UpdateFileCommand() {
+    public UpdateFileCommandHandler() {
         parser = new UpdateCommandArgsParser();
     }
 
@@ -66,8 +74,10 @@ public final class UpdateFileCommand implements Command {
      */
     @Override
     public void execute(String arguments) throws CommandException {
+        logger.log(Level.INFO, "Received update command arguments: " + arguments);
 
         if (!CommandArgsValidator.validate(arguments, UPDATE_COMMAND_ARGS_REGEX)) {
+            logger.log(Level.SEVERE, "Invalid update command format arguments: " + arguments);
             throw new CommandException("Invalid update command format.Use: update -f \"path/to/yourfile.txt\" [-a or -nl or -dl] \"your text content\"(-dl option without text content)");
         }
 
@@ -79,9 +89,12 @@ public final class UpdateFileCommand implements Command {
 
         try {
             processFile(filePath, updateOption, text, lineNumber);
+            logger.log(Level.INFO, "File updated successfully: " + filePath);
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error occurred during file update", e);
             throw new CommandException(e);
         } catch (CommandException e) {
+            logger.log(Level.SEVERE, "Error occurred during file update", e);
             throw new CommandException(e.getMessage());
         }
     }
@@ -116,6 +129,8 @@ public final class UpdateFileCommand implements Command {
      * @param text  the new text content for the file.
      */
     private void replaceFileContent(List<String> lines, String text) {
+        logger.log(Level.INFO, "Replacing file content");
+
         lines.clear();
         lines.add(text);
     }
@@ -129,11 +144,13 @@ public final class UpdateFileCommand implements Command {
      * @param lines        the current lines of the file.
      * @param lineNumber   the line number for insert or delete operations, if applicable.
      * @throws CommandException if the update operation is invalid.
-     * @see UpdateFileCommand#A_OPTION
-     * @see UpdateFileCommand#NL_OPTION
-     * @see UpdateFileCommand#DL_OPTION
+     * @see UpdateFileCommandHandler#A_OPTION
+     * @see UpdateFileCommandHandler#NL_OPTION
+     * @see UpdateFileCommandHandler#DL_OPTION
      */
     private void updateFileContent(String updateOption, String text, List<String> lines, String lineNumber) throws CommandException {
+        logger.log(Level.INFO, "Updating file content");
+
         switch (updateOption) {
             case A_OPTION:
                 lines.add(text);
@@ -155,10 +172,13 @@ public final class UpdateFileCommand implements Command {
      * @param text       the text to insert.
      * @param lines      the current lines of the file.
      * @throws CommandException if the line number is invalid.
-     * @see UpdateFileCommand#NL_OPTION
+     * @see UpdateFileCommandHandler#NL_OPTION
      */
     private void insertTextAtLine(int lineNumber, String text, List<String> lines) throws CommandException {
+        logger.log(Level.INFO, "Inserting text at line: " + lineNumber);
+
         if (lineNumber <= 0) {
+            logger.log(Level.SEVERE, "Error occurred while inserting text at line:" + lineNumber);
             throw new CommandException("Invalid line number for insertion. Please provide a valid line number.");
         }
         if (lineNumber > lines.size()) {
@@ -176,10 +196,13 @@ public final class UpdateFileCommand implements Command {
      * @param lineNumber the line number of the line to be deleted.
      * @param lines      the current lines of the file.
      * @throws CommandException if the line number is invalid.
-     * @see UpdateFileCommand#DL_OPTION
+     * @see UpdateFileCommandHandler#DL_OPTION
      */
     private void deleteLine(int lineNumber, List<String> lines) throws CommandException {
+        logger.log(Level.INFO, "Deleting line: " + lineNumber);
+
         if (lineNumber <= 0 || lineNumber > lines.size()) {
+            logger.log(Level.SEVERE, "Error occurred while deleting line:" + lineNumber);
             throw new CommandException("Invalid line number for deletion. Please provide a valid line number.");
         }
         lines.remove(lineNumber - 1);

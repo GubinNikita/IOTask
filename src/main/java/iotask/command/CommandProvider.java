@@ -1,22 +1,30 @@
 package main.java.iotask.command;
 
-import main.java.iotask.command.impl.CopyFileCommand;
-import main.java.iotask.command.impl.CreateFileCommand;
-import main.java.iotask.command.impl.DeleteFileCommand;
-import main.java.iotask.command.impl.UpdateFileCommand;
-import main.java.iotask.command.impl.ExitCommand;
-import main.java.iotask.command.impl.NoSuchCommand;
+import main.java.iotask.command.impl.CopyFileCommandHandler;
+import main.java.iotask.command.impl.CreateFileCommandHandler;
+import main.java.iotask.command.impl.DeleteFileCommandHandler;
+import main.java.iotask.command.impl.UpdateFileCommandHandler;
+import main.java.iotask.command.impl.ExitCommandHandler;
+import main.java.iotask.command.impl.NoSuchCommandHandler;
 
 import java.util.Map;
 import java.util.EnumMap;
+
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * A provider for obtaining instances of different command implementations based on their names.
  *
  * @author Nikita Gubin
- * @see Command
+ * @see CommandHandler
  */
 public class CommandProvider {
+
+    /**
+     * The logger for {@link CommandProvider} class.
+     */
+    private static final Logger logger = Logger.getLogger(CommandProvider.class.getName());
 
     /**
      * The singleton instance of the {@link CommandProvider}.
@@ -26,29 +34,31 @@ public class CommandProvider {
     /**
      * A map containing command instances, indexed by their respective {@link CommandName}.
      *
-     * @see Command
+     * @see CommandHandler
      */
-    private final Map<CommandName, Command> repository = new EnumMap<>(CommandName.class);
+    private final Map<CommandName, CommandHandler> repository = new EnumMap<>(CommandName.class);
 
     /**
      * A default command instance to be returned when the requested command is not found.
      *
-     * @see NoSuchCommand
+     * @see NoSuchCommandHandler
      */
-    private final NoSuchCommand noSuchCommand = new NoSuchCommand();
+    private final NoSuchCommandHandler noSuchCommandHandler = new NoSuchCommandHandler();
 
     /**
      * Constructs a new {@link CommandProvider} and initializes the repository with command instances.
      *
-     * @see Command
+     * @see CommandHandler
      * @see CommandName
      */
     private CommandProvider() {
-        repository.put(CommandName.COPY, new CopyFileCommand());
-        repository.put(CommandName.CREATE, new CreateFileCommand());
-        repository.put(CommandName.DELETE, new DeleteFileCommand());
-        repository.put(CommandName.UPDATE, new UpdateFileCommand());
-        repository.put(CommandName.EXIT, new ExitCommand());
+        repository.put(CommandName.COPY, new CopyFileCommandHandler());
+        repository.put(CommandName.CREATE, new CreateFileCommandHandler());
+        repository.put(CommandName.DELETE, new DeleteFileCommandHandler());
+        repository.put(CommandName.UPDATE, new UpdateFileCommandHandler());
+        repository.put(CommandName.EXIT, new ExitCommandHandler());
+
+        logger.log(Level.INFO, "CommandProvider initialized with command instances");
     }
 
     /**
@@ -66,19 +76,20 @@ public class CommandProvider {
      * @param name the name of the command
      * @return the command instance corresponding to the provided name, or a default command if the name is not found
      * @see CommandName
-     * @see Command
+     * @see CommandHandler
      */
-    public Command getCommand(String name) {
+    public CommandHandler getCommand(String name) {
         CommandName commandName;
-        Command command;
+        CommandHandler commandHandler;
 
         try {
             commandName = CommandName.valueOf(name.toUpperCase());
-            command = repository.get(commandName);
+            commandHandler = repository.get(commandName);
         } catch (IllegalArgumentException e) {
-            command = noSuchCommand;
+            commandHandler = noSuchCommandHandler;
+            logger.log(Level.WARNING, "Requested command not found: " + name);
         }
 
-        return command;
+        return commandHandler;
     }
 }

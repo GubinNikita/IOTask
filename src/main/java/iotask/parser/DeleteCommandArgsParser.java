@@ -1,6 +1,6 @@
 package main.java.iotask.parser;
 
-import main.java.iotask.command.impl.DeleteFileCommand;
+import main.java.iotask.command.impl.DeleteFileCommandHandler;
 
 /**
  * A parser for parsing command arguments specific to the delete file command.
@@ -10,12 +10,12 @@ import main.java.iotask.command.impl.DeleteFileCommand;
 public final class DeleteCommandArgsParser extends CommandArgsParser {
 
     /**
-     * Constructs a new {@link DeleteCommandArgsParser} with the regular expression pattern from the {@link DeleteFileCommand}.
+     * Constructs a new {@link DeleteCommandArgsParser} with the regular expression pattern from the {@link DeleteFileCommandHandler}.
      *
-     * @see DeleteFileCommand#DELETE_COMMAND_ARGS_REGEX
+     * @see DeleteFileCommandHandler#DELETE_COMMAND_ARGS_REGEX
      */
     public DeleteCommandArgsParser() {
-        super(DeleteFileCommand.DELETE_COMMAND_ARGS_REGEX);
+        super(DeleteFileCommandHandler.DELETE_COMMAND_ARGS_REGEX);
     }
 
     /**

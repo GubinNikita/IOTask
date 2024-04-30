@@ -1,6 +1,6 @@
 package main.java.iotask.parser;
 
-import main.java.iotask.command.impl.CreateFileCommand;
+import main.java.iotask.command.impl.CreateFileCommandHandler;
 
 /**
  * A parser for parsing command arguments specific to the create file command.
@@ -10,12 +10,12 @@ import main.java.iotask.command.impl.CreateFileCommand;
 public final class CreateCommandArgsParser extends CommandArgsParser {
 
     /**
-     * Constructs a new {@link CreateCommandArgsParser} with the regular expression pattern from the {@link CreateFileCommand}.
+     * Constructs a new {@link CreateCommandArgsParser} with the regular expression pattern from the {@link CreateFileCommandHandler}.
      *
-     * @see CreateFileCommand#CREATE_COMMAND_ARGS_REGEX
+     * @see CreateFileCommandHandler#CREATE_COMMAND_ARGS_REGEX
      */
     public CreateCommandArgsParser() {
-        super(CreateFileCommand.CREATE_COMMAND_ARGS_REGEX);
+        super(CreateFileCommandHandler.CREATE_COMMAND_ARGS_REGEX);
     }
 
     /**

@@ -1,6 +1,6 @@
 package main.java.iotask.command.impl;
 
-import main.java.iotask.command.Command;
+import main.java.iotask.command.CommandHandler;
 import main.java.iotask.exception.CommandException;
 import main.java.iotask.parser.CopyCommandArgsParser;
 import main.java.iotask.validator.CommandArgsValidator;
@@ -16,15 +16,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 /**
  * This class represents a command for copying a file.
- * It implements the {@link Command} interface and provides the functionality to execute the copy command.
+ * It implements the {@link CommandHandler} interface and provides the functionality to execute the copy command.
  * The class uses {@link CopyCommandArgsParser} for parsing the command arguments and {@link CommandArgsValidator} for validating the command format.
- * It provides two methods for copying a file: {@link CopyFileCommand#execute(String)} method uses NIO {@link Files} class for copying, and {@link CopyFileCommand#copyFileUsingBufferedIOStreams(String, String)} method uses IO classes {@link BufferedReader} and {@link BufferedWriter} for copying.
+ * It provides two methods for copying a file: {@link CopyFileCommandHandler#execute(String)} method uses NIO {@link Files} class for copying, and {@link CopyFileCommandHandler#copyFileUsingBufferedIOStreams(String, String)} method uses IO classes {@link BufferedReader} and {@link BufferedWriter} for copying.
  *
  * @author Nikita Gubin
  */
-public final class CopyFileCommand implements Command {
+public final class CopyFileCommandHandler implements CommandHandler {
+
+    /**
+     * The logger for {@link CopyFileCommandHandler} class.
+     */
+    private static final Logger logger = Logger.getLogger(CopyFileCommandHandler.class.getName());
 
     /**
      * The regular expression for validating the format of the copy command arguments.
@@ -39,9 +47,9 @@ public final class CopyFileCommand implements Command {
     private final CopyCommandArgsParser parser;
 
     /**
-     * Constructs a new {@link CopyFileCommand} with a {@link CopyCommandArgsParser}.
+     * Constructs a new {@link CopyFileCommandHandler} with a {@link CopyCommandArgsParser}.
      */
-    public CopyFileCommand() {
+    public CopyFileCommandHandler() {
         parser = new CopyCommandArgsParser();
     }
 
@@ -54,8 +62,10 @@ public final class CopyFileCommand implements Command {
      */
     @Override
     public void execute(String arguments) throws CommandException {
+        logger.log(Level.INFO, "Received copy command arguments: " + arguments);
 
         if (!CommandArgsValidator.validate(arguments, COPY_COMMAND_ARGS_REGEX)) {
+            logger.log(Level.SEVERE, "Invalid copy command format arguments: " + arguments);
             throw new CommandException("Invalid copy command format. Use: copy \"sourcefile.txt\" \"destinationfile.txt\"");
         }
 
@@ -67,7 +77,9 @@ public final class CopyFileCommand implements Command {
             Path sourcePath = Paths.get(sourceFilePath);
             Path destinationPath = Paths.get(destinationFilePath);
             Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            logger.log(Level.INFO, "File copied successfully from " + sourceFilePath + " to " + destinationFilePath);
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error occurred during file copy", e);
             throw new CommandException(e);
         }
     }
@@ -88,6 +100,7 @@ public final class CopyFileCommand implements Command {
                 writer.newLine();
             }
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error occurred during file copy using buffered IO streams", e);
             throw new CommandException(e);
         }
     }

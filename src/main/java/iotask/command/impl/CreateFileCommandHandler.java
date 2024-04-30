@@ -1,6 +1,6 @@
 package main.java.iotask.command.impl;
 
-import main.java.iotask.command.Command;
+import main.java.iotask.command.CommandHandler;
 import main.java.iotask.exception.CommandException;
 import main.java.iotask.parser.CreateCommandArgsParser;
 import main.java.iotask.validator.CommandArgsValidator;
@@ -12,14 +12,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 /**
  * This class represents a command for creating a new file with optional initial content.
- * It implements the {@link Command} interface and provides the functionality to execute the create command.
+ * It implements the {@link CommandHandler} interface and provides the functionality to execute the create command.
  * The class uses {@link CreateCommandArgsParser} for parsing the command arguments and {@link CommandArgsValidator} for validating the command format.
  *
  * @author Nikita Gubin
  */
-public final class CreateFileCommand implements Command {
+public final class CreateFileCommandHandler implements CommandHandler {
+
+    /**
+     * The logger for {@link CreateFileCommandHandler} class.
+     */
+    private static final Logger logger = Logger.getLogger(CreateFileCommandHandler.class.getName());
 
     /**
      * The regular expression for validating the format of the create command arguments.
@@ -34,9 +42,9 @@ public final class CreateFileCommand implements Command {
     private final CreateCommandArgsParser parser;
 
     /**
-     * Constructs a new {@link CreateFileCommand} with a {@link CreateCommandArgsParser}.
+     * Constructs a new {@link CreateFileCommandHandler} with a {@link CreateCommandArgsParser}.
      */
-    public CreateFileCommand() {
+    public CreateFileCommandHandler() {
         parser = new CreateCommandArgsParser();
     }
 
@@ -49,8 +57,10 @@ public final class CreateFileCommand implements Command {
      */
     @Override
     public void execute(String arguments) throws CommandException {
+        logger.log(Level.INFO, "Received create file command arguments: " + arguments);
 
         if (!CommandArgsValidator.validate(arguments, CREATE_COMMAND_ARGS_REGEX)) {
+            logger.log(Level.SEVERE, "Invalid create command format arguments: " + arguments);
             throw new CommandException("Invalid create command format. Use: create -f \"path/to/yourfile.txt\" [\"your text content\"]");
         }
 
@@ -66,7 +76,9 @@ public final class CreateFileCommand implements Command {
                     writer.write(text);
                 }
             }
+            logger.log(Level.INFO, "File created successfully at: " + filePath);
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error occurred during file creation", e);
             throw new CommandException(e);
         }
     }

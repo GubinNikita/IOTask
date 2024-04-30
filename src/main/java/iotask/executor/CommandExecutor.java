@@ -1,21 +1,29 @@
 package main.java.iotask.executor;
 
-import main.java.iotask.command.Command;
+import main.java.iotask.command.CommandHandler;
 import main.java.iotask.exception.CommandException;
 import main.java.iotask.command.CommandProvider;
+
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * A class responsible for executing commands based on the provided command line input.
  *
  * @author Nikita Gubin
- * @see Command
+ * @see CommandHandler
  */
 public class CommandExecutor {
 
     /**
+     * The logger for {@link CommandExecutor} class.
+     */
+    private static final Logger logger = Logger.getLogger(CommandExecutor.class.getName());
+
+    /**
      * The provider for obtaining instances of different command implementations.
      *
-     * @see Command
+     * @see CommandHandler
      * @see CommandProvider
      */
     private final CommandProvider commandProvider;
@@ -32,15 +40,17 @@ public class CommandExecutor {
      *
      * @param commandLine the user input command line
      * @throws CommandException if an error occurs during command execution
-     * @see Command
+     * @see CommandHandler
      */
     public void executeCommand(String commandLine) throws CommandException {
+        logger.log(Level.INFO, "Executing command: " + commandLine);
+
         String[] parts = parseCommandLine(commandLine);
         String commandName = parts[0];
         String arguments = parts[1];
 
-        Command command = commandProvider.getCommand(commandName);
-        command.execute(arguments);
+        CommandHandler commandHandler = commandProvider.getCommand(commandName);
+        commandHandler.execute(arguments);
     }
 
     /**

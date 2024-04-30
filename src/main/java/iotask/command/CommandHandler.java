@@ -7,7 +7,7 @@ import main.java.iotask.exception.CommandException;
  *
  * @author Nikita Gubin
  */
-public interface Command {
+public interface CommandHandler {
 
     /**
      * Executes the command with the provided arguments.
