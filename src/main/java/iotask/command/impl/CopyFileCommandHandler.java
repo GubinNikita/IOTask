@@ -77,7 +77,7 @@ public final class CopyFileCommandHandler implements CommandHandler {
         try {
             Path sourcePath = Paths.get(sourceFilePath);
 
-            if (!Files.exists(sourcePath)) {
+            if (Files.notExists(sourcePath)) {
                 logger.log(Level.SEVERE, "Source file does not exist: " + sourceFilePath);
                 throw new CommandException("Source file does not exist: " + sourceFilePath + ". Please provide a valid source file.");
             }
