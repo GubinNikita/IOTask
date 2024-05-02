@@ -10,10 +10,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
+
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * This class represents a command for creating a new file with optional initial content.
@@ -72,7 +73,7 @@ public final class CreateFileCommandHandler implements CommandHandler {
         try {
             Path path = Paths.get(filePath);
             Files.createDirectories(path.getParent());
-            try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            try (BufferedWriter writer = Files.newBufferedWriter(path, CREATE, TRUNCATE_EXISTING)) {
                 if (text != null) {
                     writer.write(text);
                 }
