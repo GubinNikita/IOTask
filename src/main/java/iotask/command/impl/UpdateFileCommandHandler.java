@@ -159,15 +159,9 @@ public final class UpdateFileCommandHandler implements CommandHandler {
         logger.log(Level.INFO, "Updating file content");
 
         switch (updateOption) {
-            case A_OPTION:
-                lines.add(text);
-                break;
-            case NL_OPTION:
-                insertTextAtLine(Integer.parseInt(lineNumber), text, lines);
-                break;
-            case DL_OPTION:
-                deleteLine(Integer.parseInt(lineNumber), lines);
-                break;
+            case A_OPTION -> lines.add(text);
+            case NL_OPTION -> insertTextAtLine(Integer.parseInt(lineNumber), text, lines);
+            case DL_OPTION -> deleteLine(Integer.parseInt(lineNumber), lines);
         }
     }
 
